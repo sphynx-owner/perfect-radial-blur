@@ -1,0 +1,79 @@
+[gd_scene load_steps=15 format=3 uid="uid://bruetktfv56yt"]
+
+[ext_resource type="Script" uid="uid://dge5yiq6ft3en" path="res://RotatingNode.gd" id="1_gbnow"]
+[ext_resource type="Script" uid="uid://cmet63wwojrqj" path="res://camera_3d.gd" id="1_njel3"]
+[ext_resource type="PackedScene" uid="uid://8p6li7o742g3" path="res://addons/sphynx's_radial_blur_toolkit/radial_blur_mesh.tscn" id="1_u5gs3"]
+[ext_resource type="ArrayMesh" uid="uid://c0aq6ert2osll" path="res://PropellerWithEncapsulatingMeshCorrected.obj" id="2_3747g"]
+[ext_resource type="Shader" uid="uid://c32jqjvg6uggw" path="res://addons/sphynx's_radial_blur_toolkit/radial_blur_mesh.gdshader" id="3_wvn5p"]
+[ext_resource type="ArrayMesh" uid="uid://elccjlrekcc" path="res://PropellerMeshCorrected.obj" id="4_w78nx"]
+[ext_resource type="Texture2D" uid="uid://cb0y3o88aaiay" path="res://icon.svg" id="6_7cbxl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_buypi"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("3_wvn5p")
+shader_parameter/local_rotation_axis = Vector3(0, 1, 0)
+shader_parameter/rotation_speed = 0.0
+shader_parameter/sample_count = 8
+shader_parameter/debug_color = Color(0, 0, 0, 0)
+shader_parameter/sampling_error_threshold = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3n2uc"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_8pr8v"]
+
+[sub_resource type="Sky" id="Sky_buypi"]
+sky_material = SubResource("ProceduralSkyMaterial_8pr8v")
+
+[sub_resource type="Environment" id="Environment_36iet"]
+background_mode = 2
+sky = SubResource("Sky_buypi")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_njel3"]
+albedo_texture = ExtResource("6_7cbxl")
+
+[sub_resource type="QuadMesh" id="QuadMesh_vr1i5"]
+size = Vector2(20, 20)
+orientation = 0
+
+[node name="TestScene" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 3.5269, 0, -0.256595)
+cull_mask = 1048573
+script = ExtResource("1_njel3")
+
+[node name="RadialBlurMesh2" parent="." node_paths=PackedStringArray("target_node") instance=ExtResource("1_u5gs3")]
+transform = Transform3D(0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, 0, 0, 0)
+mesh = ExtResource("2_3747g")
+surface_material_override/0 = SubResource("ShaderMaterial_buypi")
+target_node = NodePath("../RotatingNode")
+
+[node name="RotatingNode" type="Node3D" parent="."]
+script = ExtResource("1_gbnow")
+
+[node name="PropellerMesh" type="MeshInstance3D" parent="RotatingNode"]
+transform = Transform3D(0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, 0, 0, 0)
+layers = 2
+mesh = ExtResource("4_w78nx")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_3n2uc")
+
+[node name="PropellerMesh2" type="MeshInstance3D" parent="RotatingNode"]
+transform = Transform3D(0.02, 0, 0, 0, 0.019431, -0.00473676, 0, 0.00473676, 0.019431, 0, 0, 0)
+layers = 2
+mesh = ExtResource("4_w78nx")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_3n2uc")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_36iet")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.5, 0.866025, 0, -0.866025, -0.5, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.98387, 0, 0)
+material_override = SubResource("StandardMaterial3D_njel3")
+mesh = SubResource("QuadMesh_vr1i5")
